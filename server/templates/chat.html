@@ -1,0 +1,119 @@
+<html>
+
+<head>
+    <title>Awesome Chat</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .messages-container {
+            border: 3px solid #2eb8b8;
+            flex: 10 80%;
+            overflow-y: scroll;
+        }
+        
+        #messages {
+            overflow-y: scroll;
+        }
+        
+        .footer {
+            height: 3rem;
+            width: 100%;
+            background-color: white;
+            z-index: 2;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+        }
+        
+        label {
+            flex: 0 0 0;
+            white-space: nowrap;
+        }
+        
+        button {
+            flex: 1 0 0;
+        }
+        
+        input {
+            width: 100%;
+        }
+        
+        span {
+            flex: 10 0 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome!</h1>
+        <div class="messages-container">
+            <div id="messages"></div>
+        </div>
+        <div class="footer">
+            <label>Say something:</label>
+            <span> 
+            <input type="text" id="text"></input>
+        </span>
+            <button id="send">Send</button>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let user = {
+                _id: "anon",
+                name: "Ano Nymous"
+            }
+            const url = "http://" + document.domain + ":" + location.port;
+            const socket = io.connect(url);
+            socket.on('get-id', (id) => {
+                console.log(id);
+                user._id = id;
+                user.name = (parseInt(id, 16) % Math.pow(26, 4)).toString(26);
+            });
+
+            $("#send").click(function (event) {
+                socket.emit('chat', newMessage($('#text').val()));
+                console.log("emmited")
+                $('#text').val('');
+                return false;
+            });
+
+            $("#text").keypress(function (e) {
+                var key = e.which;
+                if (key == 13)  // the enter key code
+                {
+                    $("#send").click();
+                    return false;
+                }
+            });
+
+            socket.on('chat', function (msg) {
+                let $el = $(`<h4>${msg.user.name}: ${msg.text}<h4>`)
+                $("#messages").append($el);
+                $el[0].scrollIntoView();
+            });
+
+
+            function newMessage(text) {
+                return {
+                    createdAt: new Date(),
+                    text,
+                    user
+                };
+            }
+        });
+    </script>
+</body>
+
+</html>
