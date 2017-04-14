@@ -1,3 +1,12 @@
 {
-  "files.exclude": {}
+  "files.exclude": {
+    "*.pkey": "explorerExcludedFiles",
+    "*.p12": "explorerExcludedFiles",
+    "*.pem": "explorerExcludedFiles",
+    "*.cer": "explorerExcludedFiles",
+    "*.certSigningRequest": "explorerExcludedFiles",
+    "*.mobileprovision": "explorerExcludedFiles",
+    "fastlane/*": "explorerExcludedFiles",
+    "fastlane/": "explorerExcludedFiles"
+  }
 }
