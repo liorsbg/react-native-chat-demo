@@ -24,6 +24,10 @@ def web_chat():
 
 @app.route('/broadcast', methods=['GET', 'POST'])
 def broadcast():
+    """
+    Allows triggering from other processes/servers, e.g.:
+    http://localhost:5000/broadcast?message=Hello%20World!
+    """
     if request.method == 'GET':
         message = request.args.get('message')
     else:
@@ -35,7 +39,7 @@ def broadcast():
 @socketio.on('connect')
 def on_connect():
     clients.add(request.sid)
-    # Send only to user who just connected
+    # Use `room` arg to send only to user who just connected
     socketio.emit('get-id', str(request.sid), room=str(request.sid))
 
 
