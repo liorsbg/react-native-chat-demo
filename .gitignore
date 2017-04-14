@@ -1,3 +1,7 @@
 *.pkey
 *.p12
 *.pem
+*.cer
+*.certSigningRequest
+*.mobileprovision
+fastlane/
