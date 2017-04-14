@@ -5,11 +5,14 @@ import uuid
 import json
 from datetime import datetime
 from flask import Flask, render_template, request
-from flask_socketio import SocketIO, rooms
+from flask_socketio import SocketIO
+from . import notifier
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-clients = set()
+
+connected_clients = set()
+registered_tokens = {}
 
 
 @app.route('/')
@@ -33,19 +36,23 @@ def broadcast():
     else:
         message = json.loads(request.data).get('message')
     socketio.emit('chat', new_message(message))
-    return "Broadcast \"{0}\" to {1} devices.".format(message, len(clients))
+    return "Broadcast \"{0}\" to {1} devices.".format(message, len(connected_clients))
 
 
 @socketio.on('connect')
 def on_connect():
-    clients.add(request.sid)
+    connected_clients.add(request.sid)
     # Use `room` arg to send only to user who just connected
     socketio.emit('get-id', str(request.sid), room=str(request.sid))
+
+@socketio.on('register')
+def on_register(token):
+    registered_tokens[request.id] = token
 
 
 @socketio.on('disconnect')
 def on_disconnect():
-    clients.remove(request.sid)
+    connected_clients.remove(request.sid)
 
 
 @socketio.on('chat')
@@ -55,6 +62,9 @@ def on_chat(message):
         message["_id"] = str(uuid.uuid1())
 
     socketio.emit('chat', message)
+    for token, sid in registered_tokens.iteritems():
+        if sid not in connected_clients:
+            notifier.send_message(token, message)
 
 
 def new_message(text):
