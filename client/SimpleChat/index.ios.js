@@ -16,10 +16,24 @@ export default class SimpleChat extends Component {
     this.onChatReceived = this.onChatReceived.bind(this);
     this._onRegistered = this._onRegistered.bind(this);
 
-    this.socket = SocketIOClient('https://9494294e.ngrok.io');
+    this.socket = SocketIOClient('https://9494294e.ngrok.io', );
+    this.socket.on('connect', ()=> {
+      if ('deviceToken' in this.state) {
+        this.socket.emit('register', this.state.deviceToken);
+      }
+    });
     this.socket.on('chat', (message) => {
       this.setState((previousState) => {
         return { messages: GiftedChat.append(previousState.messages, message) };
+      });
+    });
+    this.socket.on('get-id', (_id) => {
+      this.setState({
+        user:
+        {
+          _id,
+          name: (parseInt(_id, 16) % Math.pow(26, 4)).toString(26)
+        }
       });
     });
   }
@@ -75,7 +89,8 @@ export default class SimpleChat extends Component {
 
 
   _onRegistered(deviceToken) {
-    console.log(deviceToken);
+    this.socket.emit('register', deviceToken)
+    this.state.deviceToken = deviceToken;
     this.onChatReceived({
       _id: 1,
       text: `Registered for Notifications with token: ${deviceToken}`,
@@ -83,17 +98,8 @@ export default class SimpleChat extends Component {
       user: {
         _id: 'admin',
         name: 'Admin Admin',
-        avatar: 'https://facebook.github.io/react/img/logo_og.png',
       },
     });
-    AlertIOS.alert(
-      'Registered For Remote Push',
-      `Device Token: ${deviceToken}`,
-      [{
-        text: 'Dismiss',
-        onPress: null,
-      }]
-    );
   }
 
   _onRegistrationError(error) {
@@ -108,14 +114,16 @@ export default class SimpleChat extends Component {
   }
 
   _onRemoteNotification(notification) {
-    AlertIOS.alert(
-      'Push Notification Received',
-      'Alert message: ' + notification.getMessage(),
-      [{
-        text: 'Dismiss',
-        onPress: null,
-      }]
-    );
+    // For now, ignore notifications while in the app.
+    //
+    // AlertIOS.alert(
+    //   'Push Notification Received',
+    //   'Alert message: ' + notification.getMessage(),
+    //   [{
+    //     text: 'Dismiss',
+    //     onPress: null,
+    //   }]
+    // );
   }
 
 }
