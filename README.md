@@ -31,8 +31,11 @@ Client
 
 Assuming you have React Native installed like so: https://facebook.github.io/react-native/docs/getting-started.html
 
-`cd` to the `client/SimpleChat` folder and `npm-install`, then `react-native run-ios`
-
+1. `cd client/SimpleChat` 
+2. `npm-install`
+3. `npm run ngrok` (creates an web accessible tunnel to localhost:5050 for on device testing)
+4. `react-native run-ios`
+5. When you're done don't forget to `pkill ngrok`.
 
 ### Push Notifications and running on Device
 fastlane.tools `fastlane pem` was a life saver in terms of automating [provisioning APNs SSL Certificates](https://firebase.google.com/docs/cloud-messaging/ios/certs)
