@@ -18,6 +18,7 @@ Also try `curl http://localhost:5050/broadcast?message=Hello%20World!` from the 
 Next, install and run the client (react native) application to have it connect and participate in the chat.
 
 TODOs
+* improve and break out notifier; run as a seperate component.
 * implement room system (user can join a specific chat room)
 * user management
 * history and syncronization

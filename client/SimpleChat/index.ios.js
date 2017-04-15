@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import SocketIOClient from 'socket.io-client';
 import { GiftedChat } from 'react-native-gifted-chat';
+import {SERVER_URL} from './constants';
 
 export default class SimpleChat extends Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class SimpleChat extends Component {
     this.onChatReceived = this.onChatReceived.bind(this);
     this._onRegistered = this._onRegistered.bind(this);
 
-    this.socket = SocketIOClient('https://9494294e.ngrok.io', );
+    this.socket = SocketIOClient(SERVER_URL, );
     this.socket.on('connect', ()=> {
       if ('deviceToken' in this.state) {
         this.socket.emit('register', this.state.deviceToken);
