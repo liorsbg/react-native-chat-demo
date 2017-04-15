@@ -1,3 +1,7 @@
+
+*.pyc
+
+# ios certificates and provisioning
 *.pkey
 *.p12
 *.pem

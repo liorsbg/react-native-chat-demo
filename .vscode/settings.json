@@ -7,6 +7,7 @@
     "*.certSigningRequest": "explorerExcludedFiles",
     "*.mobileprovision": "explorerExcludedFiles",
     "fastlane/*": "explorerExcludedFiles",
-    "fastlane/": "explorerExcludedFiles"
+    "fastlane/": "explorerExcludedFiles",
+    "*.pyc": "explorerExcludedFiles"
   }
 }
